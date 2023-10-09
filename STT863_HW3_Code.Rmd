@@ -1,0 +1,83 @@
+---
+title: "STT863_HW3_Code"
+author: "Yuhan"
+date: "2023-10-04"
+output: html_document
+---
+
+```{r 2.23.a}
+# Read the data file
+data <- read.table("CH01PR19.txt", header=FALSE, col.names=c("GPA", "ACT"))
+
+# Linear regression
+model <- lm(GPA ~ ACT, data=data)
+
+# ANOVA table
+anova_table <- anova(model)
+anova_table
+```
+```{r 2.23.c}
+alpha <- 0.01
+if (anova_table$`Pr(>F)`[1] < alpha) {
+  print("Reject H0")
+} else {
+  print("Fail to reject H0")
+}
+```
+```{r 2.23.d}
+summary_model <- summary(model)
+R2 <- summary_model$r.squared
+R2
+```
+
+```{r 2.23.e}
+cor(data$GPA,data$ACT)
+```
+
+```{r 2.26.a}
+data <- read.table("CH01PR22.txt", header=FALSE, col.names=c("Hardness", "Time"))
+
+model <- lm(Hardness ~ Time, data=data)
+
+# Display the ANOVA table
+anova_table <- anova(model)
+print(anova_table)
+```
+```{r 2.26.b}
+alpha <- 0.01
+
+# Display the p-value
+p_value <- anova_table$`Pr(>F)`[1]
+print(paste("P-value:", p_value))
+
+# Decision rule
+if (p_value < alpha) {
+  print("Reject H0: There is a linear association between hardness and elapsed time.")
+} else {
+  print("Fail to reject H0: There is no linear association between hardness and elapsed time.")
+}
+```
+
+```{r}
+# Calculate predicted values and residuals
+predicted_values <- predict(model)
+residuals <- residuals(model)
+
+# Plot residuals vs Time
+plot(data$Time, residuals, main="Residuals vs Time", xlab="Time", ylab="Residuals", pch=19, col="red")
+
+# Plot predicted deviations vs Time
+predicted_deviation <- predicted_values - mean(data$Hardness)
+plot(data$Time, predicted_deviation, main="Predicted Deviations vs Time", xlab="Time", ylab="Predicted Deviations", pch=19, col="blue")
+
+```
+```{r 2.26.d}
+summary_model <- summary(model)
+
+R_squared <- summary_model$r.squared
+r <- cor(data$Hardness, data$Time)
+
+R_squared
+r
+```
+

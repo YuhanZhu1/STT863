@@ -1,0 +1,11 @@
+---
+title: "STT863_HW1_Yuhan"
+author: "Yuhan"
+date: "2023-09-20"
+output: pdf_document
+---
+
+```{r q1.19}
+GPA_data <- read.csv2('CH01PR19.txt')
+```
+

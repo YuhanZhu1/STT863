@@ -1,0 +1,58 @@
+---
+title: "STT863_HW4_Code"
+author: "Yuhan"
+date: "2023-10-09"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r}
+#libraries
+library(ggplot2)
+library(lmtest)
+library(car)
+
+gpa_data <- read.table('CH01PR19.txt', header = FALSE, col.names = c('GPA', 'ACT'))
+model <- lm(GPA ~ ACT, data = gpa_data)
+
+# a Box plot
+#gpa_data$GPA_Range <- cut(gpa_data$GPA, breaks = seq(0, 4, 1), include.lowest = TRUE, right = FALSE)
+ggplot(gpa_data, aes(y = ACT)) + 
+  geom_boxplot() + 
+  ggtitle("Box plot of ACT scores")
+
+# c
+ggplot(data.frame(Fitted = fitted(model), Residuals = resid(model)), aes(x = Fitted, y = Residuals)) + 
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  ggtitle("Residuals vs. Fitted Values")
+
+# d Normal probability plot
+qqnorm(resid(model))
+qqline(resid(model))
+
+# Calculating r
+osm <- qqnorm(resid(model), plot.it = FALSE)$x
+osr <- qqnorm(resid(model), plot.it = FALSE)$y
+r <- cor(osm, osr)
+print(r)
+
+# e brown-forsythe test
+group <- ifelse(gpa_data$ACT < 26, "Group1", "Group2")
+bf_test <- leveneTest(resid(model), group, center = median)
+print(bf_test)
+
+# f esiduals plot
+additional_data <- read.table('CH03PR03.txt', header = FALSE, col.names = c('GPA', 'ACT', 'X2', 'X3'))
+ggplot(data.frame(X2 = additional_data$X2, Residuals = resid(model)), aes(x = X2, y = Residuals)) + 
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  ggtitle("Residuals vs. Intelligence Test Score (X2)")
+
+ggplot(data.frame(X3 = additional_data$X3, Residuals = resid(model)), aes(x = X3, y = Residuals)) + 
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  ggtitle("Residuals vs. High School Class Rank Percentile (X3)")
+
+```
